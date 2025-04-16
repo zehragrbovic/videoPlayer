@@ -14,18 +14,33 @@ videoElement.style.bottom = "20px";
 videoElement.style.right = "20px";
 videoElement.src="https://storage.googleapis.com/interactive-media-ads/media/android.mp4";
 videoElement.muted = true;
-videoElement.autoplay = true;
-document.body.appendChild(videoElement);
+//videoElement.autoplay = true;
+//document.body.appendChild(videoElement);
 
 //creating ad container
 var adContainer = document.createElement("div");
 adContainer.setAttribute("id", "ad-container");
 adContainer.style.position = "absolute";
-adContainer.style.top = "0";
-adContainer.style.left = "0";
 adContainer.style.width = "100%";
 adContainer.style.height = "100%";
-videoElement.parentNode.insertBefore(adContainer, videoElement);
+
+// Create a wrapper to hold both video and ad container
+var wrapper = document.createElement("div");
+wrapper.style.position = "fixed";
+wrapper.style.bottom = "20px";
+wrapper.style.right = "20px";
+wrapper.style.width = "320px";
+wrapper.style.height = "240px";
+wrapper.style.zIndex = "9999";
+wrapper.style.overflow = "hidden";
+document.body.appendChild(wrapper);
+
+// Move video into wrapper
+wrapper.appendChild(videoElement);
+
+// Add adContainer to wrapper
+wrapper.appendChild(adContainer);
+
 
 var adDisplayContainer;
 var adsLoader;
@@ -47,6 +62,7 @@ window.addEventListener('load', function(event) {
         loadAds(event);
     });
 });
+
 
 window.addEventListener('resize', function(event) {
   console.log("window resized");
@@ -99,6 +115,19 @@ function onAdsManagerLoaded(adsManagerLoadedEvent) {
   adsManager.addEventListener(
     google.ima.AdEvent.Type.LOADED,
     onAdLoaded);
+
+  
+    
+    try {
+      var width = videoElement.clientWidth;
+      var height = videoElement.clientHeight;
+      adsManager.init(width, height, google.ima.ViewMode.NORMAL);
+      adsManager.start();
+    } catch (adError) {
+      // Play the video without ads, if an error occurs
+      console.log("AdsManager could not be started");
+      videoElement.play();
+    }
 }
 
 function onAdError(adErrorEvent) {
@@ -164,16 +193,5 @@ function loadAds(event) {
 
   // Pass the request to the adsLoader to request ads
   adsLoader.requestAds(adsRequest);
-
-  var width = videoElement.clientWidth;
-  var height = videoElement.clientHeight;
-  try {
-    adsManager.init(width, height, google.ima.ViewMode.NORMAL);
-    adsManager.start();
-  } catch (adError) {
-    // Play the video without ads, if an error occurs
-    console.log("AdsManager could not be started");
-    videoElement.play();
-  }
 
 }
