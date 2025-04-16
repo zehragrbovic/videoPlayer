@@ -1,6 +1,6 @@
 //importing IMA SDK
 var IMASDK = document.createElement("script");
-IMASDK.src = "//imasdk.googleapis.com/js/sdkloader/ima3.js";
+IMASDK.src = "https://imasdk.googleapis.com/js/sdkloader/ima3.js";
 document.head.appendChild(IMASDK);
 
 //creating video element
@@ -9,6 +9,9 @@ videoElement.setAttribute("id", "video-element");
 videoElement.setAttribute("width", "320");
 videoElement.setAttribute("height", "240");
 videoElement.setAttribute("controls", "true");
+videoElement.style.position = "fixed";
+videoElement.style.bottom = "20px";
+videoElement.style.right = "20px";
 videoElement.src="https://storage.googleapis.com/interactive-media-ads/media/android.mp4";
 document.body.appendChild(videoElement);
 
