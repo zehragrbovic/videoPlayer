@@ -4,13 +4,13 @@ IMASDK.src = "//imasdk.googleapis.com/js/sdkloader/ima3.js";
 document.head.appendChild(IMASDK);
 
 //creating video element
-var video = document.createElement("VIDEO");
-video.setAttribute("id", "video-element");
-video.setAttribute("width", "320");
-video.setAttribute("height", "240");
-video.setAttribute("controls", "true");
-video.src="https://storage.googleapis.com/interactive-media-ads/media/android.mp4";
-document.body.appendChild(video);
+var videoElement = document.createElement("VIDEO");
+videoElement.setAttribute("id", "video-element");
+videoElement.setAttribute("width", "320");
+videoElement.setAttribute("height", "240");
+videoElement.setAttribute("controls", "true");
+videoElement.src="https://storage.googleapis.com/interactive-media-ads/media/android.mp4";
+document.body.appendChild(videoElement);
 
 //creating ad container
 var adContainer = document.createElement("div");
@@ -26,22 +26,22 @@ var adsLoaded = false;
 
 // On window load, attach an event to the play button click that triggers playback on the video element
 window.addEventListener('load', function(event) {
-    video = document.getElementById('video-element');
+    videoElement = document.getElementById('video-element');
     initializeIMA();
-    video.addEventListener('play', function(event) {
+    videoElement.addEventListener('play', function(event) {
         loadAds(event);
     });
     var playButton = document.getElementById('play-button');
     playButton.addEventListener('click', function(event) {
-      video.play();
+      videoElement.play();
     });
 });
 
 window.addEventListener('resize', function(event) {
   console.log("window resized");
   if(adsManager) {
-    var width = video.clientWidth;
-    var height = video.clientHeight;
+    var width = videoElement.clientWidth;
+    var height = videoElement.clientHeight;
     adsManager.resize(width, height, google.ima.ViewMode.NORMAL);
   }
 });
@@ -50,7 +50,7 @@ function initializeIMA() {
   console.log("initializing IMA");
   adContainer = document.getElementById('ad-container');
   adContainer.addEventListener('click', adContainerClick);
-  adDisplayContainer = new google.ima.AdDisplayContainer(adContainer, video);
+  adDisplayContainer = new google.ima.AdDisplayContainer(adContainer, videoElement);
   adsLoader = new google.ima.AdsLoader(adDisplayContainer);
   adsLoader.addEventListener(
       google.ima.AdsManagerLoadedEvent.Type.ADS_MANAGER_LOADED,
@@ -62,7 +62,7 @@ function initializeIMA() {
       false);
 
   // Let the AdsLoader know when the video has ended
-  video.addEventListener('ended', function() {
+  videoElement.addEventListener('ended', function() {
     adsLoader.contentComplete();
   });
 
@@ -74,10 +74,10 @@ function initializeIMA() {
 
   // Specify the linear and nonlinear slot sizes. This helps the SDK to
   // select the correct creative if multiple are returned.
-  adsRequest.linearAdSlotWidth = video.clientWidth;
-  adsRequest.linearAdSlotHeight = video.clientHeight;
-  adsRequest.nonLinearAdSlotWidth = video.clientWidth;
-  adsRequest.nonLinearAdSlotHeight = video.clientHeight / 3;
+  adsRequest.linearAdSlotWidth = videoElement.clientWidth;
+  adsRequest.linearAdSlotHeight = videoElement.clientHeight;
+  adsRequest.nonLinearAdSlotWidth = videoElement.clientWidth;
+  adsRequest.nonLinearAdSlotHeight = videoElement.clientHeight / 3;
 
   // Pass the request to the adsLoader to request ads
   adsLoader.requestAds(adsRequest);
@@ -86,7 +86,7 @@ function initializeIMA() {
 function onAdsManagerLoaded(adsManagerLoadedEvent) {
   // Instantiate the AdsManager from the adsLoader response and pass it the video element
   adsManager = adsManagerLoadedEvent.getAdsManager(
-    video);
+    videoElement);
 
   adsManager.addEventListener(
     google.ima.AdErrorEvent.Type.AD_ERROR,
@@ -150,17 +150,17 @@ function loadAds(event) {
   console.log("loading ads");
 
   // Initialize the container. Must be done via a user action on mobile devices.
-  video.load();
+  videoElement.load();
   adDisplayContainer.initialize();
 
-  var width = video.clientWidth;
-  var height = video.clientHeight;
+  var width = videoElement.clientWidth;
+  var height = videoElement.clientHeight;
   try {
     adsManager.init(width, height, google.ima.ViewMode.NORMAL);
     adsManager.start();
   } catch (adError) {
     // Play the video without ads, if an error occurs
     console.log("AdsManager could not be started");
-    video.play();
+    videoElement.play();
   }
 }
