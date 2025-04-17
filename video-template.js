@@ -190,8 +190,27 @@ function loadAds(event) {
   adsRequest.linearAdSlotHeight = videoElement.clientHeight;
   adsRequest.nonLinearAdSlotWidth = videoElement.clientWidth;
   adsRequest.nonLinearAdSlotHeight = videoElement.clientHeight / 3;
+  
+  adsRequest.setAdWillAutoPlay(true);
+  adsRequest.setAdWillPlayMuted(true);
 
   // Pass the request to the adsLoader to request ads
   adsLoader.requestAds(adsRequest);
 
 }
+
+// Autoplay ad and video as soon as the page loads (user gesture workaround)
+window.addEventListener('load', function () {
+    // Create and click a hidden button to simulate user interaction
+    const hiddenPlayButton = document.createElement('button');
+    hiddenPlayButton.style.display = 'none';
+    document.body.appendChild(hiddenPlayButton);
+  
+    hiddenPlayButton.addEventListener('click', function (event) {
+      loadAds(event); // triggers ad + video playback
+    });
+  
+    // Simulate user interaction
+    hiddenPlayButton.click();
+  });
+  
